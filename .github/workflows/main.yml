@@ -29,16 +29,16 @@ jobs:
 
      
       - name: Build Docker Image
-        run: docker build -t myacresgitry.azurecr.io/node-images:latest .
+        run: docker build -t myacresgitry.azurecr.io/react-micro:latest .
 
       - name: Log in to ACR
         run: az acr login --name myacresgitry
 
       - name: Push Docker Image
-        run: docker push MicroservicesRG.azurecr.io/node-images:latest
+        run: docker push MicroservicesRG.azurecr.io/react-micro:latest
 
       - name: Deploy to Azure App Service (Container)
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_APP_SERVICE }}
-          images: MicroservicesRG.azurecr.io/node-images:latest
+          images: MicroservicesRG.azurecr.io/react-micro:latest
