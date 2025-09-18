@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:                    
-      ACR_NAME: myprojectacrs              
-      RESOURCE_GROUP: myproject1
+      ACR_NAME: myacresgitry              
+      RESOURCE_GROUP: MicroservicesRG
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,20 +25,20 @@ jobs:
       
       - name: Login to Azure Container Registry
         run: |
-          echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ env.ACR_NAME }}.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+          echo ${{ secrets.ACR_PASSWORD }} | docker login .azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
      
       - name: Build Docker Image
-        run: docker build -t myprojectacrs.azurecr.io/node-images:latest .
+        run: docker build -t myacresgitry.azurecr.io/node-images:latest .
 
       - name: Log in to ACR
-        run: az acr login --name myprojectacrs
+        run: az acr login --name myacresgitry
 
       - name: Push Docker Image
-        run: docker push myprojectacrs.azurecr.io/node-images:latest
+        run: docker push MicroservicesRG.azurecr.io/node-images:latest
 
       - name: Deploy to Azure App Service (Container)
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_APP_SERVICE }}
-          images: myprojectacrs.azurecr.io/node-images:latest
+          images: MicroservicesRG.azurecr.io/node-images:latest
