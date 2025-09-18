@@ -4,35 +4,41 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'frontend/**'   #  only run when something inside frontend/ changes
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     env:                    
-      ACR_NAME: myacresgitry              
-      RESOURCE_GROUP: MicroservicesRG
-
+      ACR_NAME: myprojectacrs              
+      RESOURCE_GROUP: myproject1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      
       - name: Login to Azure Container Registry
         run: |
           echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ env.ACR_NAME }}.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
+     
       - name: Build Docker Image
-        run: docker build -t ${{ env.ACR_NAME }}.azurecr.io/react-micro:latest ./frontend
+        run: docker build -t myprojectacrs.azurecr.io/node-images:latest .
 
       - name: Log in to ACR
-        run: az acr login --name ${{ env.ACR_NAME }}
+        run: az acr login --name myprojectacrs
 
       - name: Push Docker Image
-        run: docker push ${{ env.ACR_NAME }}.azurecr.io/react-micro:latest
+        run: docker push myprojectacrs.azurecr.io/node-images:latest
+
+      - name: Deploy to Azure App Service (Container)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_APP_SERVICE }}
+          images: myprojectacrs.azurecr.io/node-images:latest
