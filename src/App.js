@@ -12,7 +12,7 @@ function App() {
       .catch(() => setService1("Error connecting to Microservice1"));
 
     // Call Flask service (Microservice2)
-    fetch("https://microservice2-aagkescycea6guej.canadacentral-01.azurewebsites.net/api/hello")
+    fetch("https://microservice2-chavemfpcxeecwc9.canadacentral-01.azurewebsites.net/api/hello")
       .then(res => res.text()) // Flask currently returns plain text
       .then(data => setService2(data))
       .catch(() => setService2("Error connecting to Microservice2"));
