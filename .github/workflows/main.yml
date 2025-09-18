@@ -9,36 +9,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:                    
-      ACR_NAME: myacresgitry              
+    env:
+      ACR_NAME: myacresgitry        # must match your Azure Container Registry name
       RESOURCE_GROUP: MicroservicesRG
+      IMAGE_NAME: react-micro
+      AZURE_APP_SERVICE: my-react-app-service   # <-- set your App Service name
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      
       - name: Login to Azure Container Registry
         run: |
           echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ env.ACR_NAME }}.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
-     
       - name: Build Docker Image
-        run: docker build -t myacresgitry.azurecr.io/react-micro:latest .
-
-      - name: Log in to ACR
-        run: az acr login --name myacresgitry
+        run: docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest .
 
       - name: Push Docker Image
-        run: docker push MicroservicesRG.azurecr.io/react-micro:latest
-
-      - name: Deploy to Azure App Service (Container)
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_APP_SERVICE }}
-          images: MicroservicesRG.azurecr.io/react-micro:latest
+        run: docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
